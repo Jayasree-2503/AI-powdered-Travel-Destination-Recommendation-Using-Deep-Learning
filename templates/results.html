@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ destination }} | AI Travel Recommendation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-brand">
+                <span class="brand-icon"><i class="fa-solid fa-compass"></i></span>
+                <span class="brand-text">Wander<span class="highlight">AI</span></span>
+            </a>
+            
+            <div class="nav-actions">
+                <a href="{{ url_for('home') }}" class="nav-back-btn">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Plan Another Trip</span>
+                </a>
+                <div class="nav-user-badge">
+                    <span class="user-avatar"><i class="fa-solid fa-user-check"></i></span>
+                    <span class="user-greeting"><strong>{{ user.name if user else 'Traveler' }}</strong></span>
+                </div>
+                <a href="{{ url_for('logout') }}" class="nav-logout-btn" title="Sign Out">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Recommendation Result Showcase -->
+    <main class="main-container">
+        <!-- Result Header Banner -->
+        <div class="result-header-banner">
+            <div class="result-badge">
+                <i class="fa-solid fa-certificate"></i> YOUR RECOMMENDED DESTINATION
+            </div>
+            <h1 class="result-dest-title">{{ destination|upper }}</h1>
+            <p class="result-tagline">{{ metadata.tagline }}</p>
+        </div>
+
+        <!-- Two-Column Destination Card -->
+        <div class="result-grid">
+            
+            <!-- Left Column: Visual Showcase & Neural Confidence -->
+            <div class="result-visual-col">
+                <div class="image-showcase-card card">
+                    <div class="image-wrapper">
+                        <img src="{{ image.url }}" alt="{{ destination }} Travel Photo" class="dest-image" loading="lazy">
+                        <div class="image-overlay">
+                            <span class="region-pill"><i class="fa-solid fa-location-dot"></i> {{ metadata.state }}, {{ metadata.region }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Unsplash Attribution -->
+                    <div class="photo-attribution">
+                        <span><i class="fa-brands fa-unsplash"></i> Photo by <a href="{{ image.photographer_url }}" target="_blank" rel="noopener noreferrer">{{ image.photographer }}</a> on <a href="https://unsplash.com?utm_source=ai_travel_recommender&utm_medium=referral" target="_blank" rel="noopener noreferrer">Unsplash</a></span>
+                    </div>
+
+                    <!-- Neural Network Prediction Confidence Box -->
+                    <div class="confidence-box">
+                        <div class="confidence-header">
+                            <div class="conf-title">
+                                <i class="fa-solid fa-microchip"></i>
+                                <span>Neural Net Confidence</span>
+                            </div>
+                            <span class="conf-percentage">{{ confidence }}%</span>
+                        </div>
+                        <div class="confidence-bar-bg">
+                            <div class="confidence-bar-fill" style="width: {{ confidence }}%;"></div>
+                        </div>
+                        <p class="confidence-note">
+                            Based on your preference for <strong>{{ user_input.travel_preference }}</strong> in <strong>{{ user_input.region }}</strong> during <strong>{{ user_input.season }}</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- User Preference Summary Tags -->
+                <div class="pref-summary-card card">
+                    <h3><i class="fa-solid fa-clipboard-check"></i> Your Trip Parameters</h3>
+                    <div class="pref-tags-grid">
+                        <div class="pref-tag">
+                            <span class="tag-icon"><i class="fa-solid fa-wallet"></i></span>
+                            <div>
+                                <span class="tag-title">Budget</span>
+                                <span class="tag-val">{{ user_input.budget }}</span>
+                            </div>
+                        </div>
+                        <div class="pref-tag">
+                            <span class="tag-icon"><i class="fa-solid fa-calendar-days"></i></span>
+                            <div>
+                                <span class="tag-title">Duration</span>
+                                <span class="tag-val">{{ user_input.duration }} Days</span>
+                            </div>
+                        </div>
+                        <div class="pref-tag">
+                            <span class="tag-icon"><i class="fa-solid fa-sun"></i></span>
+                            <div>
+                                <span class="tag-title">Season</span>
+                                <span class="tag-val">{{ user_input.season }}</span>
+                            </div>
+                        </div>
+                        <div class="pref-tag">
+                            <span class="tag-icon"><i class="fa-solid fa-users"></i></span>
+                            <div>
+                                <span class="tag-title">Travel Type</span>
+                                <span class="tag-val">{{ user_input.travel_type }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Rich Destination Travel Guide -->
+            <div class="result-details-col">
+                <!-- Description Card -->
+                <div class="card detail-card">
+                    <div class="detail-section">
+                        <div class="section-title">
+                            <i class="fa-solid fa-book-open"></i>
+                            <h3>About {{ destination }}</h3>
+                        </div>
+                        <p class="dest-description">{{ metadata.description }}</p>
+                    </div>
+
+                    <!-- Key Insights Grid -->
+                    <div class="insights-grid">
+                        <div class="insight-item">
+                            <span class="insight-icon"><i class="fa-solid fa-clock"></i></span>
+                            <div>
+                                <h4>Best Time to Visit</h4>
+                                <p>{{ metadata.best_time_to_visit }}</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <span class="insight-icon"><i class="fa-solid fa-cloud-sun"></i></span>
+                            <div>
+                                <h4>Season Suitability</h4>
+                                <p>{{ metadata.season_suitability }} ({{ metadata.climate_type }})</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <span class="insight-icon"><i class="fa-solid fa-coins"></i></span>
+                            <div>
+                                <h4>Estimated Budget</h4>
+                                <p>{{ metadata.budget_level }}</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <span class="insight-icon"><i class="fa-solid fa-hourglass-half"></i></span>
+                            <div>
+                                <h4>Ideal Duration</h4>
+                                <p>{{ metadata.ideal_duration }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Activities Card -->
+                <div class="card detail-card">
+                    <div class="section-title">
+                        <i class="fa-solid fa-person-hiking"></i>
+                        <h3>Recommended Activities</h3>
+                    </div>
+                    <ul class="activities-list">
+                        {% for activity in metadata.recommended_activities %}
+                            <li class="activity-item">
+                                <span class="activity-bullet"><i class="fa-solid fa-check"></i></span>
+                                <span>{{ activity }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Top Attractions Card -->
+                <div class="card detail-card">
+                    <div class="section-title">
+                        <i class="fa-solid fa-landmark"></i>
+                        <h3>Must-Visit Attractions</h3>
+                    </div>
+                    <div class="attractions-pills">
+                        {% for attraction in metadata.top_attractions %}
+                            <span class="attraction-pill">
+                                <i class="fa-solid fa-star"></i> {{ attraction }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="result-action">
+                    <a href="{{ url_for('home') }}" class="btn btn-primary btn-large">
+                        <i class="fa-solid fa-arrows-rotate"></i> Plan Another Trip
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Alternative Recommendations Section -->
+        {% if alternatives %}
+        <section class="alternatives-section">
+            <div class="section-heading">
+                <h2>Alternative Deep Learning Suggestions</h2>
+                <p>Other top-ranked destinations predicted by the neural network</p>
+            </div>
+            <div class="alternatives-grid">
+                {% for alt in alternatives %}
+                    <div class="alt-card card">
+                        <div class="alt-img-box">
+                            <img src="{{ alt.image }}" alt="{{ alt.name }}" loading="lazy">
+                            <span class="alt-confidence">{{ alt.confidence }}% Match</span>
+                        </div>
+                        <div class="alt-info">
+                            <h4>{{ alt.name }}</h4>
+                            <p class="alt-region"><i class="fa-solid fa-location-dot"></i> {{ alt.region }}</p>
+                            <p class="alt-tagline">{{ alt.tagline }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>AI Travel Destination Recommender &bull; Built with TensorFlow, Keras, Flask & Unsplash API</p>
+            <p class="footer-sub">Designed for Academic & B.Tech Capstone Demonstration</p>
+        </div>
+    </footer>
+</body>
+</html>

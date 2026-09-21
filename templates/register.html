@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | AI Travel Destination Recommender</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-body">
+    <!-- Compact Navigation Bar -->
+    <nav class="navbar auth-navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('login') }}" class="nav-brand">
+                <span class="brand-icon"><i class="fa-solid fa-compass"></i></span>
+                <span class="brand-text">Wander<span class="highlight">AI</span></span>
+            </a>
+            <div class="nav-badge">
+                <span class="dot pulse"></span>
+                <span>Deep Learning AI Portal</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Centered Single-Page Auth Container -->
+    <main class="auth-container">
+        <div class="auth-card card">
+            
+            <!-- Compact Header -->
+            <div class="auth-header">
+                <div class="auth-icon-box">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <h2>Create Your Account</h2>
+                <p>Join WanderAI for smart deep learning travel recommendations</p>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages auth-flash">
+                        {% for category, message in messages %}
+                            <div class="flash-banner {{ category }}">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Register Form -->
+            <form action="{{ url_for('register') }}" method="POST" class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label for="name">
+                        <i class="fa-solid fa-user"></i> Full Name
+                    </label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Alex Sharma" required autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fa-solid fa-envelope"></i> Email Address
+                    </label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="e.g. alex@example.com" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fa-solid fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Create a secure password" required autocomplete="new-password">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-sparkles"></i> Create Account & Explore
+                </button>
+            </form>
+
+            <!-- Compact Footer Links -->
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{{ url_for('login') }}">Sign In</a></p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Compact Footer -->
+    <footer class="footer auth-footer-bottom">
+        <div class="footer-container">
+            <p>AI Travel Destination Recommender &bull; Built with TensorFlow, Keras, Flask & Unsplash API</p>
+        </div>
+    </footer>
+</body>
+</html>

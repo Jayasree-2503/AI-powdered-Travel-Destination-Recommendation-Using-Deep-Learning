@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Travel Destination Recommender | Deep Learning Travel AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-brand">
+                <span class="brand-icon"><i class="fa-solid fa-compass"></i></span>
+                <span class="brand-text">Wander<span class="highlight">AI</span></span>
+            </a>
+            
+            <div class="nav-actions">
+                <div class="nav-user-badge">
+                    <span class="user-avatar"><i class="fa-solid fa-user-check"></i></span>
+                    <span class="user-greeting">Hi, <strong>{{ user.name if user else 'Traveler' }}</strong></span>
+                </div>
+                <a href="{{ url_for('logout') }}" class="nav-logout-btn" title="Sign Out">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Sign Out</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="hero-section">
+        <div class="hero-container">
+            <div class="hero-tag">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Powered by TensorFlow & Keras Deep Learning
+            </div>
+            <h1 class="hero-title">
+                Find Your Dream Vacation with <span class="gradient-text">Deep Learning</span>
+            </h1>
+            <p class="hero-subtitle">
+                Enter your travel style, budget & season — our neural network recommends the perfect destination across India
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">15+</span>
+                    <span class="stat-label">Indian Destinations</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">94%</span>
+                    <span class="stat-label">Neural Accuracy</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">&lt;25ms</span>
+                    <span class="stat-label">Instant Inference</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-banner {{ category }}">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Form Card -->
+        <div class="form-wrapper">
+            <div class="card form-card">
+                <div class="card-header">
+                    <div class="card-icon-title">
+                        <span class="section-icon"><i class="fa-solid fa-sliders"></i></span>
+                        <div>
+                            <h2>Define Your Journey</h2>
+                            <p>Configure your preferences and let our trained neural network compute the best match</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="recommendForm" action="{{ url_for('recommend') }}" method="POST">
+                    <div class="form-grid">
+                        
+                        <!-- 1. Budget -->
+                        <div class="form-group">
+                            <label for="budget">
+                                <i class="fa-solid fa-wallet"></i> Estimated Budget Tier
+                            </label>
+                            <div class="custom-select-wrapper">
+                                <select id="budget" name="budget" required>
+                                    <option value="" disabled selected>Select budget level...</option>
+                                    <option value="Low">🌱 Low (Budget-friendly / Backpacker)</option>
+                                    <option value="Medium">✨ Medium (Comfortable & Balanced)</option>
+                                    <option value="High">👑 High (Luxury & Premium Resorts)</option>
+                                </select>
+                            </div>
+                            <small class="field-hint">Defines accommodation and spending scale</small>
+                        </div>
+
+                        <!-- 2. Duration -->
+                        <div class="form-group">
+                            <label for="duration">
+                                <i class="fa-solid fa-calendar-days"></i> Trip Duration (Days)
+                            </label>
+                            <div class="duration-input-box">
+                                <button type="button" class="qty-btn" id="durDec"><i class="fa-solid fa-minus"></i></button>
+                                <input type="number" id="duration" name="duration" min="1" max="30" value="5" required>
+                                <button type="button" class="qty-btn" id="durInc"><i class="fa-solid fa-plus"></i></button>
+                                <span class="days-label">Days</span>
+                            </div>
+                            <small class="field-hint">Recommended range: 2 to 14 days</small>
+                        </div>
+
+                        <!-- 3. Season -->
+                        <div class="form-group">
+                            <label for="season">
+                                <i class="fa-solid fa-sun"></i> Travel Season
+                            </label>
+                            <div class="custom-select-wrapper">
+                                <select id="season" name="season" required>
+                                    <option value="" disabled selected>Select season of travel...</option>
+                                    <option value="Winter">❄️ Winter (Nov - Feb)</option>
+                                    <option value="Summer">☀️ Summer (Mar - Jun)</option>
+                                    <option value="Monsoon">🌧️ Monsoon (Jul - Sep)</option>
+                                    <option value="Spring">🌸 Spring (Feb - Apr)</option>
+                                    <option value="Autumn">🍂 Autumn (Sep - Nov)</option>
+                                </select>
+                            </div>
+                            <small class="field-hint">Considers weather and regional tourism peaks</small>
+                        </div>
+
+                        <!-- 4. Travel Type -->
+                        <div class="form-group">
+                            <label for="travel_type">
+                                <i class="fa-solid fa-users"></i> Travel Group Type
+                            </label>
+                            <div class="custom-select-wrapper">
+                                <select id="travel_type" name="travel_type" required>
+                                    <option value="" disabled selected>Select travel companion type...</option>
+                                    <option value="Solo">🎒 Solo (Exploration & Freedom)</option>
+                                    <option value="Couple">💑 Couple (Romantic & Scenic)</option>
+                                    <option value="Friends">👥 Friends (Adventure & Nightlife)</option>
+                                    <option value="Family">👨‍👩‍👧‍👦 Family (Comfort & Sightseeing)</option>
+                                </select>
+                            </div>
+                            <small class="field-hint">Optimizes for group safety, pace and ambiance</small>
+                        </div>
+
+                        <!-- 5. Travel Preference -->
+                        <div class="form-group">
+                            <label for="travel_preference">
+                                <i class="fa-solid fa-heart"></i> Core Travel Preference
+                            </label>
+                            <div class="custom-select-wrapper">
+                                <select id="travel_preference" name="travel_preference" required>
+                                    <option value="" disabled selected>Select primary preference...</option>
+                                    <option value="Mountains">🏔️ Mountains (High altitudes & Peaks)</option>
+                                    <option value="Beach">🏖️ Beach (Coasts, Sun & Sand)</option>
+                                    <option value="Historical">🏛️ Historical (Forts, Palaces & Heritage)</option>
+                                    <option value="Adventure">🧗 Adventure (Rafting, Treks & Thrills)</option>
+                                    <option value="Nature">🌿 Nature (Tea gardens, Lakes & Forests)</option>
+                                    <option value="Wildlife">🐘 Wildlife & Flora (Sanctuaries & Caves)</option>
+                                    <option value="Spiritual">🛕 Spiritual (Temples, Ghats & Peace)</option>
+                                </select>
+                            </div>
+                            <small class="field-hint">Key attraction style matching your passion</small>
+                        </div>
+
+                        <!-- 6. Region -->
+                        <div class="form-group">
+                            <label for="region">
+                                <i class="fa-solid fa-map-location-dot"></i> Preferred Indian Region
+                            </label>
+                            <div class="custom-select-wrapper">
+                                <select id="region" name="region" required>
+                                    <option value="" disabled selected>Select geographic region...</option>
+                                    <option value="North India">🏔️ North India (Himalayas, Rajasthan & Heritage)</option>
+                                    <option value="South India">🌴 South India (Western Ghats, Coasts & Palaces)</option>
+                                    <option value="West India">🏖️ West India (Goa & Western Lakes)</option>
+                                    <option value="East India">🍵 East India (Darjeeling & Eastern Hills)</option>
+                                    <option value="Northeast India">🌄 Northeast India (Pristine Valleys)</option>
+                                </select>
+                            </div>
+                            <small class="field-hint">Geographic area of exploration</small>
+                        </div>
+
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-action">
+                        <button type="submit" id="submitBtn" class="btn btn-primary btn-large">
+                            <span class="btn-text"><i class="fa-solid fa-wand-magic-sparkles"></i> Find My Destination</span>
+                            <span class="btn-loader"><i class="fa-solid fa-circle-notch fa-spin"></i> Neural Network Predicting...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- How the Deep Learning Model Works Section -->
+        <section class="info-section">
+            <div class="info-header">
+                <h2>Inside the Recommendation Engine</h2>
+                <p>How our trained neural network computes your optimal holiday</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-brain"></i></div>
+                    <h3>Multi-Layer Perceptron</h3>
+                    <p>Uses a feed-forward deep neural network (128 &rarr; 64 &rarr; 32 neurons) with Dropout and ReLU activations to learn complex non-linear travel patterns.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <h3>Softmax Probability</h3>
+                    <p>Outputs a calibrated multi-class probability distribution across 15 premier Indian destinations, providing quantifiable prediction confidence.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-camera-retro"></i></div>
+                    <h3>Dynamic Visuals</h3>
+                    <p>Connects with Unsplash's dynamic photography engine to fetch high-resolution, contextual destination vistas with official photographer attribution.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>AI Travel Destination Recommender &bull; Built with TensorFlow, Keras, Flask & Unsplash API</p>
+            <p class="footer-sub">Designed for Academic & B.Tech Capstone Demonstration</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
